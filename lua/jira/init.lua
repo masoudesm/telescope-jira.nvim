@@ -87,6 +87,7 @@ function M.jira_issue_picker(opts)
             previewer = previewers.new_buffer_previewer({
                 title = "Issue Details",
                 define_preview = function(self, issue)
+                    log.info("Issue key", issue.key)
                     local issue_details = get_issue_details(issue.key)
                     vim.api.nvim_buf_set_lines(
                         self.state.bufnr,
