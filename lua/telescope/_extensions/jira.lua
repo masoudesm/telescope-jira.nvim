@@ -8,7 +8,7 @@ if not has_plenary then
     error("telescope-jira.nvim requires plenary")
 end
 
-local jira = require("jira-sample")
+local jira = require("jira")
 
 local setup = function(config, _)
     jira.telescope_config = config

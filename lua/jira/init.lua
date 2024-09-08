@@ -22,7 +22,6 @@ local function run_command(cmd, args)
 end
 
 local function format_issues(issues)
-    log.info("BEFORE APPLYING =>", type(issues), issues)
     return vim.iter(issues)
         :map(function(issue)
             local issue_key, issue_title =
@@ -39,7 +38,6 @@ local function get_issues()
         "-q",
         "assignee = currentUser()",
     })
-    log.info("FORMAT ISSUES", format_issues(result))
     return format_issues(result)
 end
 
