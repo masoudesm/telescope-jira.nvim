@@ -23,10 +23,12 @@ end
 
 local function format_issues(issues)
     log.info("BEFORE APPLYING =>", type(issues), issues)
-    vim.iter(issues):map(function(issue)
-        local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
-        return { key = issue_key, title = issue_title }
-    end)
+    return vim.iter(issues)
+        :map(function(issue)
+            local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
+            return { key = issue_key, title = issue_title }
+        end)
+        :totable()
 end
 
 -- Fetch current user Jira issues using `go-jira`
