@@ -22,6 +22,7 @@ local function run_command(cmd, args)
 end
 
 local function format_issues(issues)
+    log.info("BEFORE APPLYING =>", type(issues), issues)
     vim.iter(issues):map(function(issue)
         local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
         return { key = issue_key, title = issue_title }
