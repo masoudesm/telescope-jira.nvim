@@ -25,7 +25,8 @@ local function format_issues(issues)
     log.info("BEFORE APPLYING =>", type(issues), issues)
     return vim.iter(issues)
         :map(function(issue)
-            local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
+            local issue_key, issue_title =
+                issue:match("([%S%s]+)%s*:%s*([%S%s]+)")
             return { key = issue_key, title = issue_title }
         end)
         :totable()
