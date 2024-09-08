@@ -3,23 +3,14 @@ local finders = require("telescope.finders")
 local previewers = require("telescope.previewers")
 local utils = require("telescope.previewers.utils")
 local config = require("telescope.config")
-local action_state = require("telescope.actions.state")
-local plenary_log = require("plenary.log")
 local plenary_job = require("plenary.job")
-
-local log = plenary_log.new({
-    plugin = "Jira",
-    level = "info",
-})
 
 local function run_command(cmd, args)
     local job_opts = {
         command = cmd,
         args = args,
     }
-    -- log.info("Running command", job_opts)
     local job = plenary_job:new(job_opts):sync()
-    -- log.info("Run command", job)
     return job
 end
 
