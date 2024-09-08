@@ -101,7 +101,8 @@ function M.jira_issue_picker(opts)
             attach_mappings = function(prompt_bufnr, map)
                 local function open_issue()
                     local selected_issue = action_state.get_selected_entry()
-                    local issue_details = get_issue_details(selected_issue.key)
+                    local issue_details =
+                        get_issue_details(selected_issue.value.key)
                     vim.api.nvim_buf_set_lines(
                         prompt_bufnr,
                         0,
