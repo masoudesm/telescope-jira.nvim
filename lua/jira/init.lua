@@ -1,8 +1,10 @@
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
-local plenary_log = require("plenary.log")
+local previewers = require("telescope.previewers")
+local utils = require("telescope.previewers.utils")
 local config = require("telescope.config")
 local action_state = require("telescope.actions.state")
+local plenary_log = require("plenary.log")
 local plenary_job = require("plenary.job")
 
 local log = plenary_log.new({
@@ -82,6 +84,20 @@ function M.jira_issue_picker(opts)
                 end,
             }),
             sorter = config.values.generic_sorter({}),
+            previewer = previewers.new_buffer_previewer({
+                title = "Issue Details",
+                define_preview = function(self, issue)
+                    local issue_details = get_issue_details(issue.key)
+                    vim.api.nvim_buf_set_lines(
+                        self.state.bufnr,
+                        0,
+                        0,
+                        false,
+                        issue_details
+                    )
+                    utils.highlighter(self.state.bufnr, "markdown")
+                end,
+            }),
             attach_mappings = function(prompt_bufnr, map)
                 local function open_issue()
                     local selected_issue = action_state.get_selected_entry()
