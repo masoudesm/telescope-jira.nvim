@@ -22,12 +22,10 @@ local function run_command(cmd, args)
 end
 
 local function format_issues(issues)
-    vim.iter(issues)
-        :map(function(issue)
-            local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
-            return { key = issue_key, title = issue_title }
-        end)
-        :totable()
+    vim.iter(issues):map(function(issue)
+        local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
+        return { key = issue_key, title = issue_title }
+    end)
 end
 
 -- Fetch current user Jira issues using `go-jira`
