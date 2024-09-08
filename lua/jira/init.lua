@@ -99,26 +99,6 @@ function M.jira_issue_picker(opts)
                 end,
             }),
             attach_mappings = function(prompt_bufnr, map)
-                local function open_issue()
-                    local selected_issue = action_state.get_selected_entry()
-                    local issue_details =
-                        get_issue_details(selected_issue.value.key)
-                    vim.api.nvim_buf_set_lines(
-                        prompt_bufnr,
-                        0,
-                        -1,
-                        false,
-                        vim.split(issue_details, "\n")
-                    )
-                    vim.api.nvim_buf_set_option(
-                        prompt_bufnr,
-                        "filetype",
-                        "markdown"
-                    ) -- Optional: Set syntax highlighting
-                end
-
-                map("i", "<CR>", open_issue)
-                map("n", "<CR>", open_issue)
                 return true
             end,
         })
@@ -126,8 +106,9 @@ function M.jira_issue_picker(opts)
 end
 
 -- Picker to search Jira issues in a specific project
-function M.jira_search_picker(opts, project)
+function M.jira_search_picker(opts)
     opts = opts or {}
+    local project = vim.fn.input("Project: ")
 
     pickers
         .new({}, {
@@ -145,26 +126,21 @@ function M.jira_search_picker(opts, project)
                 end,
             }),
             sorter = config.values.generic_sorter({}),
-            attach_mappings = function(prompt_bufnr, map)
-                local function open_issue()
-                    local selected_issue = action_state.get_selected_entry()
-                    local issue_details = get_issue_details(selected_issue.key)
+            previewer = previewers.new_buffer_previewer({
+                title = "Issue Details",
+                define_preview = function(self, entry)
+                    local issue_details = get_issue_details(entry.value.key)
                     vim.api.nvim_buf_set_lines(
-                        prompt_bufnr,
+                        self.state.bufnr,
                         0,
-                        -1,
+                        0,
                         false,
-                        vim.split(issue_details, "\n")
+                        issue_details
                     )
-                    vim.api.nvim_buf_set_option(
-                        prompt_bufnr,
-                        "filetype",
-                        "markdown"
-                    ) -- Optional: Set syntax highlighting
-                end
-
-                map("i", "<CR>", open_issue)
-                map("n", "<CR>", open_issue)
+                    utils.highlighter(self.state.bufnr, "markdown")
+                end,
+            }),
+            attach_mappings = function(prompt_bufnr, map)
                 return true
             end,
         })
