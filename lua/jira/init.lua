@@ -17,9 +17,9 @@ local function run_command(cmd, args)
         command = cmd,
         args = args,
     }
-    log.info("Running command", job_opts)
+    -- log.info("Running command", job_opts)
     local job = plenary_job:new(job_opts):sync()
-    log.info("Run command", job)
+    -- log.info("Run command", job)
     return job
 end
 
