@@ -21,10 +21,10 @@ local function run_command(cmd, args)
     return job
 end
 
-local function format_issue(issue)
-    vim.iter(issue:gmatch("[^\r\n]+"))
-        :map(function(line)
-            local issue_key, issue_title = line:match("(%S+)%s*:%s*(%S+)")
+local function format_issues(issues)
+    vim.iter(issues)
+        :map(function(issue)
+            local issue_key, issue_title = issue:match("(%S+)%s*:%s*(%S+)")
             return { key = issue_key, title = issue_title }
         end)
         :totable()
@@ -37,7 +37,8 @@ local function get_issues()
         "-q",
         "assignee = currentUser()",
     })
-    return format_issue(result)
+    log.info("")
+    return format_issues(result)
 end
 
 -- Fetch detailed information for a specific Jira issue
@@ -56,7 +57,7 @@ local function get_issues_by_project(project)
         "-q",
         "project " .. project,
     })
-    return format_issue(result)
+    return format_issues(result)
 end
 
 local M = {}
