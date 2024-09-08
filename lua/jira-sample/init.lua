@@ -37,7 +37,6 @@ local function get_issues()
         "-q",
         "assignee = currentUser()",
     })
-    log.info("")
     return format_issues(result)
 end
 
