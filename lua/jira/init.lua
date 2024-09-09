@@ -103,7 +103,7 @@ function M.jira_search_picker(opts)
 
     pickers
         .new({}, {
-            prompt_title = "Search Jira Issues in Project: " .. project,
+            prompt_title = "Search Jira Issues in Project: ",
             finder = finders.new_dynamic({
                 fn = function()
                     return get_issues_by_project(project)
