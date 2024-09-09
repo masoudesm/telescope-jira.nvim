@@ -50,6 +50,7 @@ local function get_issues_by_project(project)
         "-q",
         "project " .. project,
     })
+    print(result)
     return format_issues(result)
 end
 
@@ -104,7 +105,7 @@ function M.jira_search_picker(opts)
     if project then
         pickers
             .new({}, {
-                prompt_title = "Search Jira Issues in Project: ",
+                prompt_title = "Search Jira Issues in Project: " .. project,
                 finder = finders.new_dynamic({
                     fn = function()
                         return get_issues_by_project(project)
