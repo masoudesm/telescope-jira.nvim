@@ -54,7 +54,7 @@ local function get_issues_by_project(project)
     local result = run_command("jira", {
         "ls",
         "-q",
-        "project " .. project,
+        "project =" .. project,
     })
     log.info("=====>", result)
     return format_issues(result)
