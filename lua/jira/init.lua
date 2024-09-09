@@ -4,6 +4,12 @@ local previewers = require("telescope.previewers")
 local utils = require("telescope.previewers.utils")
 local config = require("telescope.config")
 local plenary_job = require("plenary.job")
+local plenary_log = require("plenary.log")
+
+local log = plenary_log:new({
+    plugin = "Jira",
+    level = "info",
+})
 
 local function run_command(cmd, args)
     local job_opts = {
@@ -50,7 +56,7 @@ local function get_issues_by_project(project)
         "-q",
         "project " .. project,
     })
-    print(result)
+    log.info("=====>", result)
     return format_issues(result)
 end
 
@@ -100,45 +106,43 @@ end
 -- Picker to search Jira issues in a specific project
 function M.jira_search_picker(opts)
     opts = opts or {}
-    local project = vim.fn.input("Project: ")
+    local project = vim.fn.input("Project: ") or ""
 
-    if project then
-        pickers
-            .new({}, {
-                prompt_title = "Search Jira Issues in Project: " .. project,
-                finder = finders.new_dynamic({
-                    fn = function()
-                        return get_issues_by_project(project)
-                    end,
-                    entry_maker = function(issue)
-                        return {
-                            value = issue,
-                            display = issue.key .. " " .. issue.title,
-                            ordinal = issue.key,
-                        }
-                    end,
-                }),
-                sorter = config.values.generic_sorter({}),
-                previewer = previewers.new_buffer_previewer({
-                    title = "Issue Details",
-                    define_preview = function(self, entry)
-                        local issue_details = get_issue_details(entry.value.key)
-                        vim.api.nvim_buf_set_lines(
-                            self.state.bufnr,
-                            0,
-                            0,
-                            false,
-                            issue_details
-                        )
-                        utils.highlighter(self.state.bufnr, "markdown")
-                    end,
-                }),
-                attach_mappings = function(prompt_bufnr, map)
-                    return true
+    pickers
+        .new({}, {
+            prompt_title = "Search Jira Issues in Project: " .. project,
+            finder = finders.new_dynamic({
+                fn = function()
+                    return get_issues_by_project(project)
                 end,
-            })
-            :find()
-    end
+                entry_maker = function(issue)
+                    return {
+                        value = issue,
+                        display = issue.key .. " " .. issue.title,
+                        ordinal = issue.key,
+                    }
+                end,
+            }),
+            sorter = config.values.generic_sorter({}),
+            previewer = previewers.new_buffer_previewer({
+                title = "Issue Details",
+                define_preview = function(self, entry)
+                    local issue_details = get_issue_details(entry.value.key)
+                    vim.api.nvim_buf_set_lines(
+                        self.state.bufnr,
+                        0,
+                        0,
+                        false,
+                        issue_details
+                    )
+                    utils.highlighter(self.state.bufnr, "markdown")
+                end,
+            }),
+            attach_mappings = function(prompt_bufnr, map)
+                return true
+            end,
+        })
+        :find()
 end
 
 return M
