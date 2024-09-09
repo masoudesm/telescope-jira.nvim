@@ -56,7 +56,6 @@ local function get_issues_by_project(project)
         "-q",
         "project =" .. project,
     })
-    log.info("=====>", result)
     return format_issues(result)
 end
 
