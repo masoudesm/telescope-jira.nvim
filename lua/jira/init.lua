@@ -101,41 +101,43 @@ function M.jira_search_picker(opts)
     opts = opts or {}
     local project = vim.fn.input("Project: ")
 
-    pickers
-        .new({}, {
-            prompt_title = "Search Jira Issues in Project: ",
-            finder = finders.new_dynamic({
-                fn = function()
-                    return get_issues_by_project(project)
+    if project then
+        pickers
+            .new({}, {
+                prompt_title = "Search Jira Issues in Project: ",
+                finder = finders.new_dynamic({
+                    fn = function()
+                        return get_issues_by_project(project)
+                    end,
+                    entry_maker = function(issue)
+                        return {
+                            value = issue,
+                            display = issue.key .. " " .. issue.title,
+                            ordinal = issue.key,
+                        }
+                    end,
+                }),
+                sorter = config.values.generic_sorter({}),
+                previewer = previewers.new_buffer_previewer({
+                    title = "Issue Details",
+                    define_preview = function(self, entry)
+                        local issue_details = get_issue_details(entry.value.key)
+                        vim.api.nvim_buf_set_lines(
+                            self.state.bufnr,
+                            0,
+                            0,
+                            false,
+                            issue_details
+                        )
+                        utils.highlighter(self.state.bufnr, "markdown")
+                    end,
+                }),
+                attach_mappings = function(prompt_bufnr, map)
+                    return true
                 end,
-                entry_maker = function(issue)
-                    return {
-                        value = issue,
-                        display = issue.key .. " " .. issue.title,
-                        ordinal = issue.key,
-                    }
-                end,
-            }),
-            sorter = config.values.generic_sorter({}),
-            previewer = previewers.new_buffer_previewer({
-                title = "Issue Details",
-                define_preview = function(self, entry)
-                    local issue_details = get_issue_details(entry.value.key)
-                    vim.api.nvim_buf_set_lines(
-                        self.state.bufnr,
-                        0,
-                        0,
-                        false,
-                        issue_details
-                    )
-                    utils.highlighter(self.state.bufnr, "markdown")
-                end,
-            }),
-            attach_mappings = function(prompt_bufnr, map)
-                return true
-            end,
-        })
-        :find()
+            })
+            :find()
+    end
 end
 
 return M
